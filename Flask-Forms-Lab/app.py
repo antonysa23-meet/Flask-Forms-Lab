@@ -8,19 +8,46 @@ app = Flask(  # Create a flask app
 )
 
 
-username = "llo2ay"
-password = "123"
-facebook_friends=["Loai","Yonathan","Adan", "George", "Fouad", "Celina"]
+accounts = {
+	'anty':'123',
+	'zain':'mahmoud',
+	'mahmoud':'zain',
+	'farid':'meet2020',
+	'lour' : "mahmoud's cat is ugly",
+	'1' : '1'
+}
+facebook_friends=["Jhon","Andrew","Lily", "Preston", "Emily", "Tia"]
 
 
-@app.route('/')  # '/' for the default page
+@app.route('/', methods = ['GET', 'POST'])  # '/' for the default page
 def login():
-  return render_template('login.html')
-  
+	if request.method == 'GET':
+		return render_template('login.html')
+	else:
+		username_in = request.form['username']
+		password_in = request.form['password']
+		for account in accounts:
+			print(account)
+			if (account == username_in and accounts[account] == password_in):
+				return redirect(url_for('home'))
+		return render_template('login.html')
+
+@app.route('/home')
+def home():
+	return render_template('home.html', facebook_friends = facebook_friends)
+
+
+@app.route('/friend_exists/<string:name>', methods = ["GET", "POST"])
+def friend_exists(name):
+	for friend in facebook_friends:
+		if name == friend:
+			return render_template('friend_exists.html', friend = True)
+		else:
+			return render_template('friend_exists.html', friend = False)
 
 
 
 if __name__ == "__main__":  # Makes sure this is the main process
 	app.run( # Starts the site
-    debug=True
+		debug=True
 	)
